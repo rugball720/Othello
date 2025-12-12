@@ -16,7 +16,7 @@ let copier_plateau plateau =
     done;
     copie;;
 
-(*Permet de savoir si un coup est valide*)
+(*Permet de savoir si un coup est valid
 let coup_est_possible (plateau, _) (x, y) =
   plateau.(x).(y) = 0 (*Case vide*)
   &&
@@ -29,7 +29,7 @@ let coup_est_possible (plateau, _) (x, y) =
     (x < 7 && plateau.(x+1).(y) <> 0)
     || 
     (*bas*)
-    (y > 0 && plateau.(x).(y-1) <> 0)
+    (y > 0 && plateau.(x).(y-1) <> 0)e
     ||
     (*haut*)
     (y < 7 && plateau.(x).(y+1) <> 0)
