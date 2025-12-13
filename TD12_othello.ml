@@ -197,4 +197,53 @@ let strategie_aleatoire (plateau, j) =
   let coup_choisi = Random.int nb_coups in
   List.nth liste_coups coup_choisi
 
-let () = print_int (partie strategie_aleatoire strategie_aleatoire true)
+let points = [| [|5;5;5;5;5;5;5;5|];
+                [|5;1;1;1;1;1;1;5|];
+                [|5;1;1;2;2;1;1;5|];
+                [|5;1;2;1;1;2;1;5|];
+                [|5;1;2;1;1;2;1;5|];
+                [|5;1;1;2;2;1;1;5|];
+                [|5;1;1;1;1;1;1;5|];
+                [|5;5;5;5;5;5;5;5|] |];;
+
+let f n = n mod 2 - n / 2
+
+let heuristique (plateau,_) =
+  let score = ref 0 in
+  for i = 0 to 7 do
+    for j = 0 to 7 do
+      score := !score + points.(i).(j) * f (plateau.(i).(j))
+    done;
+  done;
+  !score
+
+let maxi lst = List.fold_left (fun acc x -> max acc x) (min_int,(-1,-1)) lst
+let mini lst = List.fold_left (fun acc x -> min acc x) (max_int,(-1,-1)) lst
+
+let rec minimax_rec (plateau, j) depth h =
+  let liste_coups, nb_coups = lister_coups_possibles (plateau,j) in
+  if depth = 0 then
+    (h (plateau,j),(-1,-1))
+  else if nb_coups = 0 then ( (*doit on passer son tour ?*)
+    let _,nb_coups_autre_joueur = lister_coups_possibles (plateau,autre_joueur j) in
+    if nb_coups_autre_joueur = 0 then (*fin de partie*)
+      (scorer (plateau,j),(-1,-1))
+    else
+      minimax_rec (plateau,autre_joueur j) depth h
+  )
+  else begin
+    let traiter coup =
+      let copie = copier_plateau plateau in
+      jouer_coup (copie,j) coup;
+      let score,_ = minimax_rec (copie,(autre_joueur j)) (depth-1) h in
+      score,coup
+    in
+    let lst_score = List.map traiter liste_coups in
+    if j = 1 then maxi lst_score
+    else mini lst_score
+  end
+
+let minimax depth h (plateau,j) =
+  snd (minimax_rec (plateau,j) depth h)
+
+let () = print_int (partie strategie_aleatoire (minimax 3 heuristique)  true)
