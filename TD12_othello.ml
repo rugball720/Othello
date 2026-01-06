@@ -252,7 +252,8 @@ let rec alphabeta_aux depth h (plateau,j) alpha beta =
   if depth = 0 then
     (h (plateau,j),(-1,-1))
   else if nb_coups = 0 then begin(*doit on passer son tour*)
-    let _,nb_coups_autre_joueur =
+    let _,nb_coups_autre_joueur = lister_coups_possibles (plateau,j) in
+    
   end
 
 
